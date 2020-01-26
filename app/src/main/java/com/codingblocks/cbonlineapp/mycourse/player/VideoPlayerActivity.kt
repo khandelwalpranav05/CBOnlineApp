@@ -22,6 +22,7 @@ import com.codingblocks.cbonlineapp.R
 import com.codingblocks.cbonlineapp.commons.TabLayoutAdapter
 import com.codingblocks.cbonlineapp.database.models.NotesModel
 import com.codingblocks.cbonlineapp.library.EditNoteClickListener
+import com.codingblocks.cbonlineapp.mycourse.content.SectionItemsAdapter
 import com.codingblocks.cbonlineapp.mycourse.player.doubts.VideoDoubtFragment
 import com.codingblocks.cbonlineapp.mycourse.player.notes.VideoNotesFragment
 import com.codingblocks.cbonlineapp.util.CONTENT_ID
@@ -37,6 +38,7 @@ import com.codingblocks.cbonlineapp.util.VIDEO_ID
 import com.codingblocks.cbonlineapp.util.extensions.observeOnce
 import com.codingblocks.cbonlineapp.util.extensions.observer
 import com.codingblocks.cbonlineapp.util.extensions.secToTime
+import com.codingblocks.cbonlineapp.util.extensions.setRv
 import com.codingblocks.cbonlineapp.util.extensions.showSnackbar
 import com.codingblocks.cbonlineapp.util.widgets.ProgressDialog
 import com.codingblocks.cbonlineapp.util.widgets.VdoPlayerControls
@@ -55,6 +57,7 @@ import com.vdocipher.aegis.player.VdoPlayer.PlayerHost.VIDEO_STRETCH_MODE_MAINTA
 import com.vdocipher.aegis.player.VdoPlayerSupportFragment
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.bottom_sheet_note.view.*
+import kotlinx.android.synthetic.main.fragment_course_content.*
 import kotlinx.android.synthetic.main.my_fab_menu.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -104,6 +107,8 @@ class VideoPlayerActivity : AppCompatActivity(), EditNoteClickListener, AnkoLogg
     private val fab_anticlock by lazy {
         AnimationUtils.loadAnimation(applicationContext, R.anim.fab_rotate_anticlock)
     }
+    private val sectionItemsAdapter = SectionItemsAdapter()
+
 
     private val dialog by lazy { BottomSheetDialog(this) }
     private val sheetDialog: View by lazy { layoutInflater.inflate(R.layout.bottom_sheet_note, null) }
@@ -121,6 +126,10 @@ class VideoPlayerActivity : AppCompatActivity(), EditNoteClickListener, AnkoLogg
         setupUI()
         viewModel.offlineSnackbar.observer(this) {
             rootLayout.showSnackbar(it, Snackbar.LENGTH_SHORT, action = false)
+        }
+        contentRv.setRv(this, sectionItemsAdapter)
+        viewModel.contentList.observer(this) {
+            sectionItemsAdapter.submitList(it.contents)
         }
     }
 
@@ -198,6 +207,10 @@ class VideoPlayerActivity : AppCompatActivity(), EditNoteClickListener, AnkoLogg
                 deleteFolder(viewModel.videoId)
             else
                 startDownloadWorker()
+        }
+        contentListContainer.setOnClickListener {
+            contentListView.isVisible = !contentListView.isVisible
+            videoFab.isVisible = !contentListView.isVisible
         }
 
         setupViewPager()

@@ -49,6 +49,10 @@ class VideoPlayerViewModel(
         repo.getContent(contentId)
     }
 
+    val contentList = Transformations.switchMap(attemptId) {
+        repo.getContents(it, sectionId)
+    }
+
     val notes = Transformations.switchMap(attemptId) {
         fetchNotes()
         repo.getNotes(it)
@@ -69,6 +73,7 @@ class VideoPlayerViewModel(
             }
         }
     }
+
 
     fun fetchDoubts() {
         runIO {

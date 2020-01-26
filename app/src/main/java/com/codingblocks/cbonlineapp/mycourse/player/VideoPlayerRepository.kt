@@ -6,6 +6,7 @@ import com.codingblocks.cbonlineapp.database.CourseDao
 import com.codingblocks.cbonlineapp.database.DoubtsDao
 import com.codingblocks.cbonlineapp.database.NotesDao
 import com.codingblocks.cbonlineapp.database.SectionDao
+import com.codingblocks.cbonlineapp.database.SectionWithContentsDao
 import com.codingblocks.cbonlineapp.database.models.NotesModel
 import com.codingblocks.onlineapi.Clients
 import com.codingblocks.onlineapi.models.Bookmark
@@ -18,7 +19,7 @@ class VideoPlayerRepository(
     private val notesDao: NotesDao,
     private val courseDao: CourseDao,
     private val contentDao: ContentDao,
-    private val sectionDao: SectionDao
+    private val sectionDao: SectionWithContentsDao
 ) {
     suspend fun fetchCourseNotes(attemptId: String) = safeApiCall { Clients.onlineV2JsonApi.getNotesByAttemptId(attemptId) }
 
@@ -27,6 +28,9 @@ class VideoPlayerRepository(
     suspend fun addNote(note: Note) = safeApiCall { Clients.onlineV2JsonApi.createNote(note) }
 
     fun getContent(ccid: String) = contentDao.getContentLive(ccid).distinctUntilChanged()
+
+    fun getContents(attemptId: String, sectionId: String) = sectionDao.getNextContent(attemptId, sectionId).distinctUntilChanged()
+
 
     suspend fun insertNotes(notes: List<Note>) {
         notes.forEach {

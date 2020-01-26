@@ -70,12 +70,12 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Clients.authJwt = prefs.SP_JWT_TOKEN_KEY
         Clients.refreshToken = prefs.SP_JWT_REFRESH_TOKEN
         viewModel.isLoggedIn.postValue(prefs.SP_JWT_TOKEN_KEY.isNotEmpty())
-        initializeUI(false)
+
+        initializeUI(prefs.SP_JWT_TOKEN_KEY.isNotEmpty())
+
         viewModel.user.observer(this) {
             if (it != null) {
                 setUser(it)
-                initializeUI(true)
-            } else {
             }
         }
     }

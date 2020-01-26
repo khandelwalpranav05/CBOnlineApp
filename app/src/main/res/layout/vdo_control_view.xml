@@ -123,11 +123,11 @@
 
             <ImageButton
                 android:id="@+id/vdo_pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
                 style="@style/VdoMediaButton"
-                android:src="@drawable/ic_pause_white_24dp" />
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_pause" />
 
             <ImageButton
                 android:id="@+id/vdo_ffwd"
